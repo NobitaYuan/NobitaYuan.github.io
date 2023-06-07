@@ -193,14 +193,6 @@ h6::before {
   }
 }
 
-/* 文字溢出隐藏 */
-.article-meta{
-  /* overflow:hidden;  */
-  text-overflow:ellipsis;
-  display:-webkit-box; 
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2; 
-}
 
 /* 帧率检测 */
 #fps {

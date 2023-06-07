@@ -214,3 +214,71 @@ h6::before {
   padding: 4px;
   border-radius: 4px;
 }
+
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: rgba(177, 178, 243, 0.2);
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7ba7e3;
+  background-image: linear-gradient(180deg,#29cafe,#ac30fe48);
+  border-radius: 2em;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-moz-selection {
+  color: #fff;
+  background-color: var(--theme-color);
+}
+
+
+/* 目录选择的颜色 */
+#aside-content #card-toc .toc-content .toc-link.active{
+  background: #00c4b6;
+  background-image: linear-gradient(90deg,#29cafe,#aa30fe);
+  color: #fff;
+}
+
+/* 前往小窝颜色 */
+#aside-content .card-info #card-info-btn{
+  transition: all .6s;
+  background-image: linear-gradient(90deg,#29cafe,#cd82ff);
+}
+#aside-content .card-info #card-info-btn:hover{
+  background-image: linear-gradient(90deg,#cd82ff,#29cafe);
+}
+
+
+/* 页码按钮颜色 */
+#pagination .page-number.current{
+  cursor: pointer;
+  background-image: linear-gradient(90deg,#29cafe,#cd82ff);
+}
+#pagination .page-number{
+  background: var(--btn-bg);
+}
+
+/* 右下角按钮的颜色 */
+#rightside-config-show>button:nth-child(1){
+  background-image: linear-gradient(180deg,#29cafe,#49a5fe);
+
+}
+#rightside-config-show>button:nth-child(2){
+  background-image: linear-gradient(180deg,#5e8dff,#8a8cff);
+
+}
+#rightside-config-show>button:nth-child(3){
+  background-image: linear-gradient(180deg,#8773fc,#cd82ff);
+
+}

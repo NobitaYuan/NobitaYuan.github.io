@@ -1,0 +1,440 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>DOM对象 | NobitaYuan</title><meta name="author" content="NobitaYuan"><meta name="copyright" content="NobitaYuan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="浏览器的DOM对象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DOM对象">
+<meta property="og:url" content="https://nobitayuan.github.io/2023/06/06/js/09.DOM%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="NobitaYuan">
+<meta property="og:description" content="浏览器的DOM对象">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-06-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-06-07T12:54:45.845Z">
+<meta property="article:author" content="NobitaYuan">
+<meta property="article:tag" content="js">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="document">
+<meta property="article:tag" content="DOM">
+<meta property="article:tag" content="element">
+<meta property="article:tag" content="节点">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo2.png"><link rel="canonical" href="https://nobitayuan.github.io/2023/06/06/js/09.DOM%E5%AF%B9%E8%B1%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.17/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":30,"languages":{"author":"作者: NobitaYuan","link":"链接: ","source":"来源: NobitaYuan","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdnjs.cloudflare.com/ajax/libs/flickr-justified-gallery/2.1.2/fjGallery.min.js',
+      css: 'https://cdnjs.cloudflare.com/ajax/libs/flickr-justified-gallery/2.1.2/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'DOM对象',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-07 20:54:45'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><svg aria-hidden="true" style="position:absolute; overflow:hidden; width:0; height:0"><symbol id="icon-sun" viewBox="0 0 1024 1024"><path d="M960 512l-128 128v192h-192l-128 128-128-128H192v-192l-128-128 128-128V192h192l128-128 128 128h192v192z" fill="#FFD878" p-id="8420"></path><path d="M736 512a224 224 0 1 0-448 0 224 224 0 1 0 448 0z" fill="#FFE4A9" p-id="8421"></path><path d="M512 109.248L626.752 224H800v173.248L914.752 512 800 626.752V800h-173.248L512 914.752 397.248 800H224v-173.248L109.248 512 224 397.248V224h173.248L512 109.248M512 64l-128 128H192v192l-128 128 128 128v192h192l128 128 128-128h192v-192l128-128-128-128V192h-192l-128-128z" fill="#4D5152" p-id="8422"></path><path d="M512 320c105.888 0 192 86.112 192 192s-86.112 192-192 192-192-86.112-192-192 86.112-192 192-192m0-32a224 224 0 1 0 0 448 224 224 0 0 0 0-448z" fill="#4D5152" p-id="8423"></path></symbol><symbol id="icon-moon" viewBox="0 0 1024 1024"><path d="M611.370667 167.082667a445.013333 445.013333 0 0 1-38.4 161.834666 477.824 477.824 0 0 1-244.736 244.394667 445.141333 445.141333 0 0 1-161.109334 38.058667 85.077333 85.077333 0 0 0-65.066666 135.722666A462.08 462.08 0 1 0 747.093333 102.058667a85.077333 85.077333 0 0 0-135.722666 65.024z" fill="#FFB531" p-id="11345"></path><path d="M329.728 274.133333l35.157333-35.157333a21.333333 21.333333 0 1 0-30.165333-30.165333l-35.157333 35.157333-35.114667-35.157333a21.333333 21.333333 0 0 0-30.165333 30.165333l35.114666 35.157333-35.114666 35.157334a21.333333 21.333333 0 1 0 30.165333 30.165333l35.114667-35.157333 35.157333 35.157333a21.333333 21.333333 0 1 0 30.165333-30.165333z" fill="#030835" p-id="11346"></path></symbol></svg><meta name="generator" content="Hexo 6.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+document.addEventListener('pjax:send', () => {
+  Pace.restart()
+})
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo6.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">151</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">22</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 影音</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-user"></i><span> 个人</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-message"></i><span> 关于</span></a></li><li><a class="site-page child" href="/love/"><i class="fa-fw fas fa-heart-pulse"></i><span> MyLove</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="NobitaYuan"><img class="site-icon" src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo2.png"/><span class="site-name">NobitaYuan</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 影音</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-user"></i><span> 个人</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-message"></i><span> 关于</span></a></li><li><a class="site-page child" href="/love/"><i class="fa-fw fas fa-heart-pulse"></i><span> MyLove</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">DOM对象</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-05T16:00:00.000Z" title="发表于 2023-06-06 00:00:00">2023-06-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-07T12:54:45.845Z" title="更新于 2023-06-07 20:54:45">2023-06-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/">JavaScript</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/JavaScript/%E5%9F%BA%E7%A1%80/">基础</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="DOM对象"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="DOM"><a href="#DOM" class="headerlink" title="DOM"></a>DOM</h1><h3 id="DOM概述"><a href="#DOM概述" class="headerlink" title="DOM概述"></a>DOM概述</h3><p>DOM 文档对象模型(document object model) 主要是用于操作html文档及相关内容（css）。对于文档的操作会造成浏览器的重新渲染（重绘（改变的一个元素的显示内容及部分样式） 重排（改变一个元素的位置及大小尺寸）（回流）重绘不一定重排 重排必定发生重绘）</p>
+<h3 id="DOM具备的内容"><a href="#DOM具备的内容" class="headerlink" title="DOM具备的内容"></a>DOM具备的内容</h3><ul>
+<li><strong>document</strong> （属于BOM）文档对象</li>
+<li><strong>rootElement</strong> （根元素）</li>
+<li><strong>element</strong> （所有的标签都是element）</li>
+<li><strong>attribute</strong> （所有标签的属性都是attribute）</li>
+<li><strong>text</strong> （所有标签内容的文本都是text）</li>
+</ul>
+<p><img src="/../../images/image-20230216114907264.png" alt="image-20230216114907264"></p>
+<h5 id="从上的包含关系可以看出大的内容可以获取或操作包含的内容也就是"><a href="#从上的包含关系可以看出大的内容可以获取或操作包含的内容也就是" class="headerlink" title="从上的包含关系可以看出大的内容可以获取或操作包含的内容也就是"></a>从上的包含关系可以看出大的内容可以获取或操作包含的内容也就是</h5><ul>
+<li>document可以获取rootElement</li>
+<li>document可以获取element</li>
+<li>element可以获取里面的element</li>
+<li>element可以获取里面attribute以及text</li>
+</ul>
+<h3 id="获取元素相关的操作-document和element都有的方法"><a href="#获取元素相关的操作-document和element都有的方法" class="headerlink" title="获取元素相关的操作 document和element都有的方法"></a>获取元素相关的操作 document和element都有的方法</h3><ul>
+<li>getElementById 通过id来获取元素  （元素 element）</li>
+<li>getElementsByClassName  通过classname获取所有的符合的元素 （伪数组）</li>
+<li>getElementsByTagName 通过标签名获取所有符合的元素 （伪数组）</li>
+<li>getElementsByName 通过name属性来获取符合的元素 （伪数组）</li>
+<li>querySelector 通过传入选择器来获取符合的第一个元素 （元素 element）</li>
+<li>querySelectorAll 通过传入选择器获取符合的所有元素 （伪数组）</li>
+<li>所有跟上面一致后面带NS表示命名空间获取查找</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取元素的方式</span></span><br><span class="line"><span class="comment">// 通过id获取div</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;box&#x27;</span>))<span class="comment">//传入一个id名返回一个元素（htmlElement）</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">getElementsByClassName</span>(<span class="string">&#x27;context&#x27;</span>))<span class="comment">//传入一个class名返回 HTMLCollection 伪数组</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">getElementsByTagName</span>(<span class="string">&#x27;div&#x27;</span>))<span class="comment">//传入一个标签名返回HTMLCollection</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">getElementsByName</span>(<span class="string">&#x27;hello&#x27;</span>))<span class="comment">//传入一个name属性名返回NodeList 伪数组</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.context&#x27;</span>)) <span class="comment">//根据选择器获取匹配的第一个元素</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;#box&#x27;</span>)) <span class="comment">//根据选择器获取所有匹配的 返回NodeList 伪数组</span></span><br><span class="line"><span class="comment">//通过id为box的div获取里面的a标签</span></span><br><span class="line"><span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;box&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="title function_">querySelector</span>(<span class="string">&#x27;a&#x27;</span>))</span><br><span class="line"><span class="comment">//document获取根元素</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>( <span class="variable language_">document</span>.<span class="title function_">getRootNode</span>())</span><br></pre></td></tr></table></figure>
+
+<p><strong>伪数组具备下标的特性及length属性 但是不具备数组的方法</strong></p>
+<h3 id="element操作attribute"><a href="#element操作attribute" class="headerlink" title="element操作attribute"></a>element操作attribute</h3><h5 id="getAttribute-获取属性值的方法-setAttribute-设置属性的方法"><a href="#getAttribute-获取属性值的方法-setAttribute-设置属性的方法" class="headerlink" title="getAttribute 获取属性值的方法 setAttribute 设置属性的方法"></a>getAttribute 获取属性值的方法 setAttribute 设置属性的方法</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> element = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;box&#x27;</span>)</span><br><span class="line"><span class="comment">//使用getAttribute函数来获取属性值</span></span><br><span class="line"><span class="keyword">var</span> value = element.<span class="title function_">getAttribute</span>(<span class="string">&#x27;href&#x27;</span>) <span class="comment">//根据属性名获取属性值</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(value)</span><br><span class="line"><span class="comment">//getAttribute相匹配的setAttribute</span></span><br><span class="line">element.<span class="title function_">setAttribute</span>(<span class="string">&#x27;number&#x27;</span>,<span class="string">&#x27;10&#x27;</span>)<span class="comment">//设置属性number值为10</span></span><br><span class="line">element.<span class="title function_">setAttribute</span>(<span class="string">&#x27;number&#x27;</span>,<span class="string">&#x27;20&#x27;</span>)<span class="comment">//修改属性number为20</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="getAttributeNode-获取属性对象-setAttributeNode-设置属性对象"><a href="#getAttributeNode-获取属性对象-setAttributeNode-设置属性对象" class="headerlink" title="getAttributeNode 获取属性对象  setAttributeNode 设置属性对象"></a>getAttributeNode 获取属性对象  setAttributeNode 设置属性对象</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取单个的属性节点 及 设置对应的属性节点</span></span><br><span class="line"><span class="keyword">var</span> obj = element.<span class="title function_">getAttributeNode</span>(<span class="string">&#x27;class&#x27;</span>) <span class="comment">//返回的是一个属性对象</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(obj.<span class="property">value</span>)</span><br><span class="line"><span class="comment">//传入一个Attr对象 进行设置</span></span><br><span class="line"><span class="comment">// element.setAttributeNode()</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="获取所有的属性名-getAttributeNames"><a href="#获取所有的属性名-getAttributeNames" class="headerlink" title="获取所有的属性名 getAttributeNames"></a>获取所有的属性名 getAttributeNames</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> attrNames = element.<span class="title function_">getAttributeNames</span>() <span class="comment">//返回所有的属性名</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attrNames)</span><br></pre></td></tr></table></figure>
+
+<h5 id="attributes-属性-（属于element的属性）"><a href="#attributes-属性-（属于element的属性）" class="headerlink" title="attributes 属性 （属于element的属性）"></a>attributes 属性 （属于element的属性）</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用attributes来获取所有的属性对象 伪数组 NameNodeMap</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(element.<span class="property">attributes</span>)</span><br><span class="line"><span class="comment">// console.log(element.attributes)</span></span><br><span class="line"><span class="comment">//访问对应的class属性对象</span></span><br><span class="line"><span class="comment">//利用下标访问</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(element.<span class="property">attributes</span>[<span class="number">2</span>])<span class="comment">//Attribute对象</span></span><br><span class="line"><span class="comment">//利用key来访问</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(element.<span class="property">attributes</span>[<span class="string">&#x27;class&#x27;</span>].<span class="property">value</span>)</span><br><span class="line"><span class="comment">//Attribute对象里面的属性值的访问使用value属性方法</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(element.<span class="property">attributes</span>[<span class="number">2</span>].<span class="property">value</span>)<span class="comment">//class的属性值</span></span><br><span class="line"><span class="comment">//NameNodeMap里面对应的属性的增删改查</span></span><br><span class="line"><span class="keyword">var</span> attrs = element.<span class="property">attributes</span></span><br><span class="line"><span class="comment">//查询 getNamedItem item</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attrs.<span class="title function_">getNamedItem</span>(<span class="string">&#x27;class&#x27;</span>).<span class="property">value</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attrs.<span class="title function_">item</span>(<span class="number">2</span>).<span class="property">value</span>)</span><br><span class="line"><span class="comment">//修改 添加是一样的方法</span></span><br><span class="line">attrs[<span class="number">0</span>].<span class="property">value</span> = <span class="string">&#x27;http://www.baidu.com&#x27;</span></span><br><span class="line"><span class="comment">// attrs.setNamedItem() 传递一个Attr对象来进行修改或者添加</span></span><br><span class="line"><span class="comment">//删除方法</span></span><br><span class="line">attrs.<span class="title function_">removeNamedItem</span>(<span class="string">&#x27;hello&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h5 id="element都具备的属性-（直接赋值或者获取）"><a href="#element都具备的属性-（直接赋值或者获取）" class="headerlink" title="element都具备的属性 （直接赋值或者获取）"></a>element都具备的属性 （直接赋值或者获取）</h5><ul>
+<li><p>id</p>
+</li>
+<li><p>className</p>
+</li>
+<li><p>tagName</p>
+</li>
+<li><p>titile</p>
+</li>
+<li><p>style</p>
+</li>
+<li><p>innerHTML 显示的html代码 和 innerText 显示的文本</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">innerHTML</span>) <span class="comment">//直接获取里面所有的html代码 赋值的时候会自动识别html代码(xss攻击)</span></span><br><span class="line">box.<span class="property">innerHTML</span> = <span class="string">&#x27;&lt;font color=&quot;red&quot;&gt;hahahah&lt;/font&gt;&#x27;</span></span><br><span class="line"><span class="comment">// console.log(box.innerText) //只会获取文本 不会识别html代码</span></span><br><span class="line">box.<span class="property">innerText</span> = <span class="string">&#x27;&lt;font color=&quot;red&quot;&gt;hahahah&lt;/font&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>对于本身自带的属性可以直接点的形式来进行获取或者赋值</p>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对于element元素本身自带的属性 可以直接设置 a标签本身自带href input标签本身自带value属性</span></span><br><span class="line"><span class="comment">//通过直接点出来的形式进行设置和获取</span></span><br><span class="line"><span class="comment">// id class style 标签名  title</span></span><br><span class="line"><span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">id</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">className</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">style</span>) <span class="comment">//返回一个样式对象</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">tagName</span>) <span class="comment">//标签名</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">title</span>) <span class="comment">//标签名</span></span><br><span class="line"><span class="comment">//对于标签本身不自带的属性 出现的值为undefined</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(box.<span class="property">hi</span>)</span><br><span class="line">box.<span class="property">id</span> = <span class="string">&#x27;box&#x27;</span></span><br><span class="line">box.<span class="property">className</span> = <span class="string">&#x27;context&#x27;</span></span><br><span class="line"><span class="comment">//直接设置a标签的href属性</span></span><br><span class="line">element.<span class="property">href</span> = <span class="string">&#x27;http://www.bilibili.com&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素内样式的操作"><a href="#元素内样式的操作" class="headerlink" title="元素内样式的操作"></a>元素内样式的操作</h3><h5 id="获取样式"><a href="#获取样式" class="headerlink" title="获取样式"></a>获取样式</h5><h6 id="style-返回一个样式对象-通过样式对象-样式名来获取"><a href="#style-返回一个样式对象-通过样式对象-样式名来获取" class="headerlink" title="style 返回一个样式对象 通过样式对象.样式名来获取"></a>style 返回一个样式对象 通过样式对象.样式名来获取</h6><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取样式</span></span><br><span class="line"><span class="keyword">var</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>)</span><br><span class="line"><span class="comment">//第一种方式 使用style属性进行获取</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">style</span>) <span class="comment">//返回的是一个对象 样式对象 里面包含的对应的样式</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">style</span>[<span class="number">0</span>]) <span class="comment">//获取style里面包含的样式 fontsize样式名 (如果不是内嵌的样式 那么使用style属性无法获取)</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">style</span>.<span class="property">fontSize</span>)<span class="comment">//获取style属性中包含的fontSize的样式值</span></span><br><span class="line"><span class="comment">//如果要获取style属性中包含样式（内嵌的样式）那么使用element.style.样式名（使用驼峰命名）</span></span><br><span class="line"><span class="comment">//但是这种获取方式无法获取外联样式及内联样式 只能获取内嵌</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">style</span>.<span class="property">color</span>)</span><br></pre></td></tr></table></figure>
+
+<h6 id="getComputedStyle-返回一个样式对象-通过样式对象-样式名来获取"><a href="#getComputedStyle-返回一个样式对象-通过样式对象-样式名来获取" class="headerlink" title="getComputedStyle 返回一个样式对象 通过样式对象.样式名来获取"></a>getComputedStyle 返回一个样式对象 通过样式对象.样式名来获取</h6><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第二种获取方式 通过对应的方法来进行获取 (兼容问题)</span></span><br><span class="line"><span class="comment">//第一个参数需要被获取的元素 这个返回的style里面是有内置的默认值的 如果你设置的样式他就会覆盖这个默认值</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getComputedStyle</span>(div))<span class="comment">//属于window的方法 返回的是样式对象 他可以获取所有的样式 </span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getComputedStyle</span>(div).<span class="property">position</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getComputedStyle</span>(div).<span class="property">color</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">getComputedStyle</span>(div).<span class="property">fontSize</span>)</span><br></pre></td></tr></table></figure>
+
+<p>存在兼容问题</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//兼容问题解决</span></span><br><span class="line"><span class="comment">//兼容问题 ie的</span></span><br><span class="line"><span class="comment">// element.currentStyle</span></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">getStyle</span>(<span class="params">ele,name</span>)&#123;</span><br><span class="line">    <span class="keyword">return</span> getComputedStyle?<span class="title function_">getComputedStyle</span>(ele)[name]:ele.<span class="property">currentStyle</span>[name]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="设置样式"><a href="#设置样式" class="headerlink" title="设置样式"></a>设置样式</h5><h6 id="style来进行设置"><a href="#style来进行设置" class="headerlink" title="style来进行设置"></a>style来进行设置</h6><p>优点</p>
+<ul>
+<li>可以单独对于某一个样式进行精确控制</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>每次只能设置一个样式</li>
+<li>他会发生多次重绘和重排 （效率低）</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置样式</span></span><br><span class="line"><span class="comment">// 第一种方式 (每次设置只能设置一个)</span></span><br><span class="line">div.<span class="property">style</span>.<span class="property">fontWeight</span> = <span class="number">700</span></span><br><span class="line">div.<span class="property">style</span>.<span class="property">fontSize</span> = <span class="string">&#x27;40px&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h6 id="通过指定class名字来设置"><a href="#通过指定class名字来设置" class="headerlink" title="通过指定class名字来设置"></a>通过指定class名字来设置</h6><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//第二种设置通过class名字来设置(一次性可以设置多个样式)</span></span><br><span class="line">div.<span class="property">className</span> = <span class="string">&#x27;font&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>优点</p>
+<ul>
+<li>可以一次性设置多个样式</li>
+<li>只会发生一次重绘和重排 （效率高）</li>
+</ul>
+<p>缺点</p>
+<ul>
+<li>没有办法做到随意更改</li>
+</ul>
+<h3 id="创建对应的内容"><a href="#创建对应的内容" class="headerlink" title="创建对应的内容"></a>创建对应的内容</h3><ul>
+<li>创建元素 createElement</li>
+<li>创建属性 createAttribute</li>
+<li>创建文本 createTextNode</li>
+<li>创建片段 createDocumentFragment</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建元素</span></span><br><span class="line"><span class="keyword">var</span> ele = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;a&#x27;</span>) <span class="comment">//传入标签</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele)</span><br><span class="line"><span class="comment">//创建属性</span></span><br><span class="line"><span class="keyword">var</span> attr = <span class="variable language_">document</span>.<span class="title function_">createAttribute</span>(<span class="string">&#x27;href&#x27;</span>)<span class="comment">//传入属性名 通过value来进行赋值</span></span><br><span class="line">attr.<span class="property">value</span> = <span class="string">&#x27;http://www.baidu.com&#x27;</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attr)</span><br><span class="line"><span class="comment">//将attr和ele联系在一块 建议使用setAttribute</span></span><br><span class="line">ele.<span class="title function_">setAttributeNode</span>(attr)</span><br><span class="line"><span class="comment">//创建文本节点 传入对应的文本内容</span></span><br><span class="line"><span class="keyword">var</span> text = <span class="variable language_">document</span>.<span class="title function_">createTextNode</span>(<span class="string">&#x27;你好&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(text)</span><br><span class="line"><span class="comment">//appenChild 建议使用innerText</span></span><br><span class="line">ele.<span class="title function_">appendChild</span>(text) <span class="comment">//将文本添加到元素中</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele)</span><br><span class="line"><span class="comment">//创建片段</span></span><br><span class="line"><span class="comment">// document.createDocumentFragment</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="节点相关操作"><a href="#节点相关操作" class="headerlink" title="节点相关操作"></a>节点相关操作</h3><p>节点主要分为三类 分别为</p>
+<ul>
+<li>元素节点 （element）</li>
+<li>属性节点 （attribute）</li>
+<li>文本节点  （textNode）</li>
+</ul>
+<h4 id="关于节点的属性"><a href="#关于节点的属性" class="headerlink" title="关于节点的属性"></a>关于节点的属性</h4><ul>
+<li>nodeType 节点类型</li>
+<li>nodeName 节点名</li>
+<li>nodeValue 节点值</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>节点名</th>
+<th>nodeType</th>
+<th>nodeName</th>
+<th>nodeValue</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>元素节点</td>
+<td>1</td>
+<td>标签名</td>
+<td>null</td>
+</tr>
+<tr>
+<td>属性节点</td>
+<td>2</td>
+<td>属性名</td>
+<td>属性值</td>
+</tr>
+<tr>
+<td>文本节点</td>
+<td>3</td>
+<td>#text</td>
+<td>文本值</td>
+</tr>
+</tbody></table>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ele = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;a&#x27;</span>) <span class="comment">//传入标签</span></span><br><span class="line"><span class="comment">//创建属性</span></span><br><span class="line"><span class="keyword">var</span> attr = <span class="variable language_">document</span>.<span class="title function_">createAttribute</span>(<span class="string">&#x27;href&#x27;</span>)<span class="comment">//传入属性名 通过value来进行赋值</span></span><br><span class="line">attr.<span class="property">value</span> = <span class="string">&#x27;http://www.baidu.com&#x27;</span></span><br><span class="line"><span class="comment">//创建文本节点 传入对应的文本内容</span></span><br><span class="line"><span class="keyword">var</span> text = <span class="variable language_">document</span>.<span class="title function_">createTextNode</span>(<span class="string">&#x27;你好&#x27;</span>)</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele.<span class="property">nodeType</span>)<span class="comment">//1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attr.<span class="property">nodeType</span>)<span class="comment">//2</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(text.<span class="property">nodeType</span>)<span class="comment">//3</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele.<span class="property">nodeName</span>)<span class="comment">//标签名 大写</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele.<span class="property">tagName</span>)<span class="comment">//标签名 大写 </span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attr.<span class="property">nodeName</span>)<span class="comment">//属性名</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(text.<span class="property">nodeName</span>)<span class="comment">//#text</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(ele.<span class="property">nodeValue</span>)<span class="comment">//null</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(attr.<span class="property">nodeValue</span>)<span class="comment">//属性值</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(text.<span class="property">nodeValue</span>)<span class="comment">//文本值</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="节点操作的方法"><a href="#节点操作的方法" class="headerlink" title="节点操作的方法"></a>节点操作的方法</h4><h5 id="节点的添加"><a href="#节点的添加" class="headerlink" title="节点的添加"></a>节点的添加</h5><ul>
+<li>append 追加到后面（支持追加多个）</li>
+<li>appendChild （追加到最后）</li>
+<li>insertBefor （插入到某个子元素之前）</li>
+<li>insertAdjacentHTML （插入html）</li>
+<li>insertAdjacentText  (插入文本）</li>
+<li>insertAdjacentElement （插入元素）</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ele = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;a&#x27;</span>) <span class="comment">//传入标签</span></span><br><span class="line"><span class="keyword">var</span> ele1 = <span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;p&#x27;</span>) <span class="comment">//传入标签</span></span><br><span class="line"><span class="comment">//将a标签添加到div中</span></span><br><span class="line"><span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;box&#x27;</span>)</span><br><span class="line"><span class="comment">//追加子元素 在后面添加</span></span><br><span class="line">box.<span class="title function_">appendChild</span>(ele)</span><br><span class="line"><span class="comment">//插入到b的前面 第一个参数是需要插入的元素 第二个参数是子元素</span></span><br><span class="line"><span class="comment">//不允许重复插入同一元素 插入同一元素只会改变位置</span></span><br><span class="line">box.<span class="title function_">insertBefore</span>(ele,box.<span class="title function_">querySelector</span>(<span class="string">&#x27;b&#x27;</span>))</span><br><span class="line"><span class="comment">//append追加</span></span><br><span class="line"><span class="comment">//  box.append(ele)</span></span><br><span class="line"><span class="comment">//  box.append(ele,ele1) //支持追加多个</span></span><br><span class="line">box.<span class="title function_">append</span>(<span class="string">&#x27;&lt;b&gt;hello&lt;/b&gt;&#x27;</span>)<span class="comment">//如果传入的是string类型 他会当作文本节点插入</span></span><br><span class="line"><span class="comment">//插入对应元素的</span></span><br><span class="line"><span class="comment">//传入俩个参数 位置 内容</span></span><br><span class="line"><span class="comment">// 位置字符串 beforeBegin afterBegin 开始 beforeend aterend 结尾</span></span><br><span class="line">box.<span class="title function_">insertAdjacentHTML</span>(<span class="string">&quot;afterbegin&quot;</span>,<span class="string">&#x27;&lt;header&gt;hahahah&lt;/header&gt;&#x27;</span>) <span class="comment">//插入html</span></span><br><span class="line">box.<span class="title function_">insertAdjacentHTML</span>(<span class="string">&quot;beforeBegin&quot;</span>,<span class="string">&#x27;&lt;header&gt;hahahah&lt;/header&gt;&#x27;</span>) <span class="comment">//插入html</span></span><br><span class="line">box.<span class="title function_">insertAdjacentHTML</span>(<span class="string">&quot;beforeend&quot;</span>,<span class="string">&#x27;&lt;header&gt;hahahah&lt;/header&gt;&#x27;</span>) <span class="comment">//插入html</span></span><br><span class="line">box.<span class="title function_">insertAdjacentHTML</span>(<span class="string">&quot;afterend&quot;</span>,<span class="string">&#x27;&lt;header&gt;hahahah&lt;/header&gt;&#x27;</span>) <span class="comment">//插入html</span></span><br><span class="line"><span class="comment">// box.insertAdjacentText() //插入文本 </span></span><br><span class="line">box.<span class="title function_">insertAdjacentText</span>(<span class="string">&quot;afterend&quot;</span>,<span class="string">&#x27;&lt;header&gt;hahahah&lt;/header&gt;&#x27;</span>) <span class="comment">//插入文本</span></span><br><span class="line"><span class="comment">// box.insertAdjacentElement() //插入元素</span></span><br><span class="line">box.<span class="title function_">insertAdjacentElement</span>(<span class="string">&quot;beforeBegin&quot;</span>,<span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;footer&#x27;</span>)) </span><br></pre></td></tr></table></figure>
+
+<h5 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h5><ul>
+<li>remove 移除本身</li>
+<li>removeChild 传入对应的子节点进行删除</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//remove移除自身的所有</span></span><br><span class="line"><span class="comment">// box.remove()</span></span><br><span class="line"><span class="comment">// removeChild删除子元素</span></span><br><span class="line">box.<span class="title function_">removeChild</span>(box.<span class="title function_">querySelector</span>(<span class="string">&#x27;b&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="替换"><a href="#替换" class="headerlink" title="替换"></a>替换</h5><ul>
+<li>replaceChild 替换子节点</li>
+<li>replaceChildren 替换所有的子节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//替换子节点 用于替换的节点 子节点</span></span><br><span class="line">box.<span class="title function_">replaceChild</span>(<span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;div&#x27;</span>),box.<span class="title function_">querySelector</span>(<span class="string">&#x27;b&#x27;</span>))</span><br><span class="line"><span class="comment">//替换所有的子节点 replaceChildren</span></span><br><span class="line">box.<span class="title function_">replaceChildren</span>(<span class="variable language_">document</span>.<span class="title function_">createElement</span>(<span class="string">&#x27;canvas&#x27;</span>),<span class="variable language_">document</span>.<span class="title function_">createTextNode</span>(<span class="string">&#x27;文本&#x27;</span>))</span><br></pre></td></tr></table></figure>
+
+<h5 id="克隆节点-（返回新的节点）"><a href="#克隆节点-（返回新的节点）" class="headerlink" title="克隆节点 （返回新的节点）"></a>克隆节点 （返回新的节点）</h5><ul>
+<li>cloneNode 返回一个新的节点传入一个boolean类型的值是否深度克隆</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//cloneNode 传入一个boolean类型的值 是否深度克隆 默认值为false</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>( box.<span class="title function_">cloneNode</span>()) <span class="comment">//只会克隆自身 里面的内容不会进行克隆</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>( box.<span class="title function_">cloneNode</span>(<span class="literal">true</span>)) <span class="comment">//会克隆所有的内容</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="判断是否存在子节点"><a href="#判断是否存在子节点" class="headerlink" title="判断是否存在子节点"></a>判断是否存在子节点</h5><ul>
+<li>hasChildNodes 是否存在某节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//判断是否存在子节点 (不包含属性节点)</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="title function_">hasChildNodes</span>())</span><br></pre></td></tr></table></figure>
+
+<h4 id="判断是否存在属性的相关方法"><a href="#判断是否存在属性的相关方法" class="headerlink" title="判断是否存在属性的相关方法"></a>判断是否存在属性的相关方法</h4><ul>
+<li>hasAttribute 判断是否存在指定属性</li>
+<li>hasAttributes 判断是否存在属性</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">hello</span>=<span class="string">&quot;你好&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="keyword">var</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript">    <span class="comment">//判断是否存在指定属性（必须声明） 返回值boolean</span></span></span><br><span class="line"><span class="language-javascript">    <span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="title function_">hasAttribute</span>(<span class="string">&#x27;hello&#x27;</span>))<span class="comment">//true</span></span></span><br><span class="line"><span class="language-javascript">    <span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="title function_">hasAttribute</span>(<span class="string">&#x27;id&#x27;</span>))<span class="comment">//false</span></span></span><br><span class="line"><span class="language-javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="节点的关系-（关系查询）（只读属性）"><a href="#节点的关系-（关系查询）（只读属性）" class="headerlink" title="节点的关系 （关系查询）（只读属性）"></a>节点的关系 （关系查询）（只读属性）</h4><h5 id="父子关系"><a href="#父子关系" class="headerlink" title="父子关系"></a>父子关系</h5><ul>
+<li>childNodes 获取所有的子节点 </li>
+<li>children 获取所有的子元素节点</li>
+<li>firstChild 获取第一个子节点</li>
+<li>firstElementChild 获取第一个子元素节点</li>
+<li>lastChild 获取最后一个节点</li>
+<li>lastElementChild 获取最后一个子元素节点</li>
+<li>parentNode 父节点</li>
+<li>parentElement 父元素节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取子节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">childNodes</span>)<span class="comment">//所有的子节点 NodeList 包含空文本节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">childNodes</span>.<span class="property">length</span>)<span class="comment">//所有的子节点的个数</span></span><br><span class="line"><span class="comment">//获取所有的子元素节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">children</span>)<span class="comment">//所有的子元素节点 HTMLCollection</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">children</span>.<span class="property">length</span>)</span><br><span class="line"><span class="comment">//获取第一个子节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">firstChild</span>)</span><br><span class="line"><span class="comment">//获取第一个元素节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">firstElementChild</span>)</span><br><span class="line"><span class="comment">//获取最后一个子节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">lastChild</span>)</span><br><span class="line"><span class="comment">//获取最后一个元素节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">lastElementChild</span>)</span><br><span class="line"><span class="comment">//获取父节点 parent</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">parentNode</span>) <span class="comment">//父节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">parentElement</span>) <span class="comment">//父元素</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="兄弟关系"><a href="#兄弟关系" class="headerlink" title="兄弟关系"></a>兄弟关系</h5><ul>
+<li>previousSibling 前一个节点</li>
+<li>previousElementSibling 前一个元素节点</li>
+<li>nextSibling 后一个节点</li>
+<li>nextElementSibling 后一个元素节点</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//兄弟关系</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">previousSibling</span>) <span class="comment">//前面兄弟节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">previousElementSibling</span>) <span class="comment">//前面的兄弟元素节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">nextSibling</span>) <span class="comment">//后面兄弟节点</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(div.<span class="property">nextElementSibling</span>) <span class="comment">//后面的兄弟元素节点</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="去除空文本节点"><a href="#去除空文本节点" class="headerlink" title="去除空文本节点"></a>去除空文本节点</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">removeEmptyTextNode</span>(<span class="params">node</span>) &#123;</span><br><span class="line">    <span class="comment">//去除所有的空文本节点  删除</span></span><br><span class="line">    <span class="keyword">var</span> childs = node.<span class="property">childNodes</span> <span class="comment">//获取所有的子节点</span></span><br><span class="line">    <span class="comment">//遍历 伪数组实现了迭代iterator 可以被for of遍历</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> child <span class="keyword">of</span> childs) &#123;</span><br><span class="line">        <span class="comment">//找到所有的空文本节点</span></span><br><span class="line">        <span class="keyword">if</span> (child.<span class="property">nodeType</span> == <span class="number">3</span> &amp;&amp; child.<span class="property">nodeValue</span>.<span class="title function_">trim</span>() == <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">            child.<span class="title function_">remove</span>()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://nobitayuan.github.io">NobitaYuan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://nobitayuan.github.io/2023/06/06/js/09.DOM%E5%AF%B9%E8%B1%A1/">https://nobitayuan.github.io/2023/06/06/js/09.DOM%E5%AF%B9%E8%B1%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://nobitayuan.github.io" target="_blank">NobitaYuan</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/js/">js</a><a class="post-meta__tags" href="/tags/%E5%89%8D%E7%AB%AF/">前端</a><a class="post-meta__tags" href="/tags/document/">document</a><a class="post-meta__tags" href="/tags/DOM/">DOM</a><a class="post-meta__tags" href="/tags/element/">element</a><a class="post-meta__tags" href="/tags/%E8%8A%82%E7%82%B9/">节点</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/06/06/js/10.%E4%BA%8B%E4%BB%B6(%E4%B8%8A)/" title="JS事件(上)"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">JS事件(上)</div></div></a></div><div class="next-post pull-right"><a href="/2023/06/06/js/08.BOM%E5%AF%B9%E8%B1%A1/" title="BOM对象"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">BOM对象</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/06/06/js/08.BOM%E5%AF%B9%E8%B1%A1/" title="BOM对象"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">BOM对象</div></div></a></div><div><a href="/2023/06/06/js/01.JavaScript%E5%85%A5%E9%97%A8/" title="JavaScript入门"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">JavaScript入门</div></div></a></div><div><a href="/2023/06/06/js/00.%E9%9C%80%E8%A6%81%E6%89%8B%E5%86%99%E7%9A%84%E4%BB%A3%E7%A0%81/" title="需要手写的代码"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">需要手写的代码</div></div></a></div><div><a href="/2023/06/06/js/02.%E8%BF%90%E7%AE%97%E7%AC%A6%E5%8F%8A%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8F%8A%E6%9D%A1%E4%BB%B6%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/" title="运算符及表达式及条件控制语句"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">运算符及表达式及条件控制语句</div></div></a></div><div><a href="/2023/06/06/js/03.%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6%E8%AF%AD%E5%8F%A5/" title="循环控制语句"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">循环控制语句</div></div></a></div><div><a href="/2023/06/06/js/05.%E6%95%B0%E7%BB%84/" title="数组"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-06</div><div class="title">数组</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo6.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">NobitaYuan</div><div class="author-info__description">记性不好？那就记录下来！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">151</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">22</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/NobitaYuan"><i class="fab fa-github"></i><span>前往小窝...</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/NobitaYuan" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="https://space.bilibili.com/19217489" target="_blank" title="bilibili"><i class="fab fa-bilibili"></i></a><a class="social-icon" href="https://www.zhihu.com/people/hello-43-1-31" target="_blank" title="zhihu"><i class="fab fa-zhihu"></i></a><a class="social-icon" href="mailto:nobitayuan@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">是不是感觉名字不好记呀？ 来跟我读：(诺比塔 袁) 这下不就记住了吗？</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DOM"><span class="toc-number">1.</span> <span class="toc-text">DOM</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E6%A6%82%E8%BF%B0"><span class="toc-number">1.0.1.</span> <span class="toc-text">DOM概述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DOM%E5%85%B7%E5%A4%87%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.0.2.</span> <span class="toc-text">DOM具备的内容</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BB%8E%E4%B8%8A%E7%9A%84%E5%8C%85%E5%90%AB%E5%85%B3%E7%B3%BB%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%87%BA%E5%A4%A7%E7%9A%84%E5%86%85%E5%AE%B9%E5%8F%AF%E4%BB%A5%E8%8E%B7%E5%8F%96%E6%88%96%E6%93%8D%E4%BD%9C%E5%8C%85%E5%90%AB%E7%9A%84%E5%86%85%E5%AE%B9%E4%B9%9F%E5%B0%B1%E6%98%AF"><span class="toc-number">1.0.2.0.1.</span> <span class="toc-text">从上的包含关系可以看出大的内容可以获取或操作包含的内容也就是</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0%E7%9B%B8%E5%85%B3%E7%9A%84%E6%93%8D%E4%BD%9C-document%E5%92%8Celement%E9%83%BD%E6%9C%89%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.3.</span> <span class="toc-text">获取元素相关的操作 document和element都有的方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#element%E6%93%8D%E4%BD%9Cattribute"><span class="toc-number">1.0.4.</span> <span class="toc-text">element操作attribute</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#getAttribute-%E8%8E%B7%E5%8F%96%E5%B1%9E%E6%80%A7%E5%80%BC%E7%9A%84%E6%96%B9%E6%B3%95-setAttribute-%E8%AE%BE%E7%BD%AE%E5%B1%9E%E6%80%A7%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.4.0.1.</span> <span class="toc-text">getAttribute 获取属性值的方法 setAttribute 设置属性的方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#getAttributeNode-%E8%8E%B7%E5%8F%96%E5%B1%9E%E6%80%A7%E5%AF%B9%E8%B1%A1-setAttributeNode-%E8%AE%BE%E7%BD%AE%E5%B1%9E%E6%80%A7%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.0.4.0.2.</span> <span class="toc-text">getAttributeNode 获取属性对象  setAttributeNode 设置属性对象</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%89%80%E6%9C%89%E7%9A%84%E5%B1%9E%E6%80%A7%E5%90%8D-getAttributeNames"><span class="toc-number">1.0.4.0.3.</span> <span class="toc-text">获取所有的属性名 getAttributeNames</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#attributes-%E5%B1%9E%E6%80%A7-%EF%BC%88%E5%B1%9E%E4%BA%8Eelement%E7%9A%84%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="toc-number">1.0.4.0.4.</span> <span class="toc-text">attributes 属性 （属于element的属性）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#element%E9%83%BD%E5%85%B7%E5%A4%87%E7%9A%84%E5%B1%9E%E6%80%A7-%EF%BC%88%E7%9B%B4%E6%8E%A5%E8%B5%8B%E5%80%BC%E6%88%96%E8%80%85%E8%8E%B7%E5%8F%96%EF%BC%89"><span class="toc-number">1.0.4.0.5.</span> <span class="toc-text">element都具备的属性 （直接赋值或者获取）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%83%E7%B4%A0%E5%86%85%E6%A0%B7%E5%BC%8F%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.5.</span> <span class="toc-text">元素内样式的操作</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.0.5.0.1.</span> <span class="toc-text">获取样式</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#style-%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA%E6%A0%B7%E5%BC%8F%E5%AF%B9%E8%B1%A1-%E9%80%9A%E8%BF%87%E6%A0%B7%E5%BC%8F%E5%AF%B9%E8%B1%A1-%E6%A0%B7%E5%BC%8F%E5%90%8D%E6%9D%A5%E8%8E%B7%E5%8F%96"><span class="toc-number">1.0.5.0.1.1.</span> <span class="toc-text">style 返回一个样式对象 通过样式对象.样式名来获取</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#getComputedStyle-%E8%BF%94%E5%9B%9E%E4%B8%80%E4%B8%AA%E6%A0%B7%E5%BC%8F%E5%AF%B9%E8%B1%A1-%E9%80%9A%E8%BF%87%E6%A0%B7%E5%BC%8F%E5%AF%B9%E8%B1%A1-%E6%A0%B7%E5%BC%8F%E5%90%8D%E6%9D%A5%E8%8E%B7%E5%8F%96"><span class="toc-number">1.0.5.0.1.2.</span> <span class="toc-text">getComputedStyle 返回一个样式对象 通过样式对象.样式名来获取</span></a></li></ol></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E6%A0%B7%E5%BC%8F"><span class="toc-number">1.0.5.0.2.</span> <span class="toc-text">设置样式</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#style%E6%9D%A5%E8%BF%9B%E8%A1%8C%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.0.5.0.2.1.</span> <span class="toc-text">style来进行设置</span></a></li><li class="toc-item toc-level-6"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E6%8C%87%E5%AE%9Aclass%E5%90%8D%E5%AD%97%E6%9D%A5%E8%AE%BE%E7%BD%AE"><span class="toc-number">1.0.5.0.2.2.</span> <span class="toc-text">通过指定class名字来设置</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%B9%E5%BA%94%E7%9A%84%E5%86%85%E5%AE%B9"><span class="toc-number">1.0.6.</span> <span class="toc-text">创建对应的内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E7%9B%B8%E5%85%B3%E6%93%8D%E4%BD%9C"><span class="toc-number">1.0.7.</span> <span class="toc-text">节点相关操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E8%8A%82%E7%82%B9%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="toc-number">1.0.7.1.</span> <span class="toc-text">关于节点的属性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E6%93%8D%E4%BD%9C%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.7.2.</span> <span class="toc-text">节点操作的方法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E7%9A%84%E6%B7%BB%E5%8A%A0"><span class="toc-number">1.0.7.2.1.</span> <span class="toc-text">节点的添加</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%A0%E9%99%A4"><span class="toc-number">1.0.7.2.2.</span> <span class="toc-text">删除</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%9B%BF%E6%8D%A2"><span class="toc-number">1.0.7.2.3.</span> <span class="toc-text">替换</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%8B%E9%9A%86%E8%8A%82%E7%82%B9-%EF%BC%88%E8%BF%94%E5%9B%9E%E6%96%B0%E7%9A%84%E8%8A%82%E7%82%B9%EF%BC%89"><span class="toc-number">1.0.7.2.4.</span> <span class="toc-text">克隆节点 （返回新的节点）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E5%AD%90%E8%8A%82%E7%82%B9"><span class="toc-number">1.0.7.2.5.</span> <span class="toc-text">判断是否存在子节点</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8%E5%B1%9E%E6%80%A7%E7%9A%84%E7%9B%B8%E5%85%B3%E6%96%B9%E6%B3%95"><span class="toc-number">1.0.7.3.</span> <span class="toc-text">判断是否存在属性的相关方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%8A%82%E7%82%B9%E7%9A%84%E5%85%B3%E7%B3%BB-%EF%BC%88%E5%85%B3%E7%B3%BB%E6%9F%A5%E8%AF%A2%EF%BC%89%EF%BC%88%E5%8F%AA%E8%AF%BB%E5%B1%9E%E6%80%A7%EF%BC%89"><span class="toc-number">1.0.7.4.</span> <span class="toc-text">节点的关系 （关系查询）（只读属性）</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%88%B6%E5%AD%90%E5%85%B3%E7%B3%BB"><span class="toc-number">1.0.7.4.1.</span> <span class="toc-text">父子关系</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%84%E5%BC%9F%E5%85%B3%E7%B3%BB"><span class="toc-number">1.0.7.4.2.</span> <span class="toc-text">兄弟关系</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%BB%E9%99%A4%E7%A9%BA%E6%96%87%E6%9C%AC%E8%8A%82%E7%82%B9"><span class="toc-number">1.0.7.5.</span> <span class="toc-text">去除空文本节点</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/06/07/KnowledgePoints/React%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2023/06/07/KnowledgePoints/React%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题">无题</a><time datetime="2023-06-07T14:42:21.661Z" title="发表于 2023-06-07 22:42:21">2023-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/07/KnowledgePoints/JS%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2023/06/07/KnowledgePoints/JS%E9%9B%B6%E6%95%A3%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题">无题</a><time datetime="2023-06-07T14:42:10.989Z" title="发表于 2023-06-07 22:42:10">2023-06-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/07/js/04.%E5%89%8D%E7%AB%AF%E9%9B%B6%E6%95%A3%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="无题"/></a><div class="content"><a class="title" href="/2023/06/07/js/04.%E5%89%8D%E7%AB%AF%E9%9B%B6%E6%95%A3%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9/" title="无题">无题</a><time datetime="2023-06-07T09:17:43.998Z" title="发表于 2023-06-07 17:17:43">2023-06-07</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://ts1.cn.mm.bing.net/th/id/R-C.d5ab885cd02263c447edea13bd4eb06f?rik=io1mNZmII83GHw&amp;riu=http%3a%2f%2fimage.hnol.net%2fc%2f2016-10%2f05%2f20%2f201610052006512571-2127595.jpg&amp;ehk=sCZYotTH0JiRh80ttR%2bPGC95zALaETi8Hkj6WsAz85M%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0')"><div id="footer-wrap"><div class="copyright">&copy;2023 By NobitaYuan</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">此路甚是遥远，但也不可妄自菲薄.<p><a target="_blank" href="https://hexo.io/"><img src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&logo=hexo" title="博客框架为Hexo"></a>&nbsp;<a target="_blank" href="https://butterfly.js.org/"><img src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&logo=bitdefender" title="主题采用butterfly"></a>&nbsp;<a target="_blank" href="https://github.com/NobitaYuan"><img src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&logo=GitHub" title="本站项目由Gtihub托管"></a>&nbsp;<a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&logo=Claris" title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"></a></p></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><a class="icon-V hidden" onclick="switchNightMode()" title="浅色和深色模式转换"><svg width="25" height="25" viewBox="0 0 1024 1024"><use id="modeicon" xlink:href="#icon-moon"></use></svg></a><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.17/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async src="/js/title.js"></script><script async src="/js/fps.js"></script><script src="/js/debounce.js"></script><script src="/js/sun_moon.js" async></script><script async src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script async src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><script defer type="text/javascript" src="https://cdn1.tianli0.top/npm/sweetalert2@8.19.0/dist/sweetalert2.all.js"></script><script defer src="/js/lunar.js"></script><script defer src="/js/day.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>

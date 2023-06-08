@@ -1,0 +1,340 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>GC垃圾回收机制 | NobitaYuan</title><meta name="author" content="NobitaYuan"><meta name="copyright" content="NobitaYuan"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="GC垃圾回收机制详解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GC垃圾回收机制">
+<meta property="og:url" content="https://nobitayuan.github.io/2023/06/06/TechnicalArticles/outhers/01.GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="NobitaYuan">
+<meta property="og:description" content="GC垃圾回收机制详解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg">
+<meta property="article:published_time" content="2023-06-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-06-07T14:00:11.854Z">
+<meta property="article:author" content="NobitaYuan">
+<meta property="article:tag" content="垃圾回收">
+<meta property="article:tag" content="内存泄漏">
+<meta property="article:tag" content="内存溢出">
+<meta property="article:tag" content="堆">
+<meta property="article:tag" content="栈">
+<meta property="article:tag" content="V8">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg"><link rel="shortcut icon" href="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo2.png"><link rel="canonical" href="https://nobitayuan.github.io/2023/06/06/TechnicalArticles/outhers/01.GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.17/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: {"limitDay":365,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":30,"languages":{"author":"作者: NobitaYuan","link":"链接: ","source":"来源: NobitaYuan","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdnjs.cloudflare.com/ajax/libs/flickr-justified-gallery/2.1.2/fjGallery.min.js',
+      css: 'https://cdnjs.cloudflare.com/ajax/libs/flickr-justified-gallery/2.1.2/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: true,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'GC垃圾回收机制',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-07 22:00:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><span id="fps"></span><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="https://cdn1.tianli0.top/npm/element-ui@2.15.6/packages/theme-chalk/lib/index.css"><svg aria-hidden="true" style="position:absolute; overflow:hidden; width:0; height:0"><symbol id="icon-sun" viewBox="0 0 1024 1024"><path d="M960 512l-128 128v192h-192l-128 128-128-128H192v-192l-128-128 128-128V192h192l128-128 128 128h192v192z" fill="#FFD878" p-id="8420"></path><path d="M736 512a224 224 0 1 0-448 0 224 224 0 1 0 448 0z" fill="#FFE4A9" p-id="8421"></path><path d="M512 109.248L626.752 224H800v173.248L914.752 512 800 626.752V800h-173.248L512 914.752 397.248 800H224v-173.248L109.248 512 224 397.248V224h173.248L512 109.248M512 64l-128 128H192v192l-128 128 128 128v192h192l128 128 128-128h192v-192l128-128-128-128V192h-192l-128-128z" fill="#4D5152" p-id="8422"></path><path d="M512 320c105.888 0 192 86.112 192 192s-86.112 192-192 192-192-86.112-192-192 86.112-192 192-192m0-32a224 224 0 1 0 0 448 224 224 0 0 0 0-448z" fill="#4D5152" p-id="8423"></path></symbol><symbol id="icon-moon" viewBox="0 0 1024 1024"><path d="M611.370667 167.082667a445.013333 445.013333 0 0 1-38.4 161.834666 477.824 477.824 0 0 1-244.736 244.394667 445.141333 445.141333 0 0 1-161.109334 38.058667 85.077333 85.077333 0 0 0-65.066666 135.722666A462.08 462.08 0 1 0 747.093333 102.058667a85.077333 85.077333 0 0 0-135.722666 65.024z" fill="#FFB531" p-id="11345"></path><path d="M329.728 274.133333l35.157333-35.157333a21.333333 21.333333 0 1 0-30.165333-30.165333l-35.157333 35.157333-35.114667-35.157333a21.333333 21.333333 0 0 0-30.165333 30.165333l35.114666 35.157333-35.114666 35.157334a21.333333 21.333333 0 1 0 30.165333 30.165333l35.114667-35.157333 35.157333 35.157333a21.333333 21.333333 0 1 0 30.165333-30.165333z" fill="#030835" p-id="11346"></path></symbol></svg><meta name="generator" content="Hexo 6.3.0"></head><body><script>window.paceOptions = {
+  restartOnPushState: false
+}
+
+document.addEventListener('pjax:send', () => {
+  Pace.restart()
+})
+</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-minimal.min.css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js"></script><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo6.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">158</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 影音</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-user"></i><span> 个人</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-message"></i><span> 关于</span></a></li><li><a class="site-page child" href="/love/"><i class="fa-fw fas fa-heart-pulse"></i><span> MyLove</span></a></li></ul></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg fixed" id="page-header" style="background-image: url('https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg')"><nav id="nav"><span id="blog-info"><a href="/" title="NobitaYuan"><img class="site-icon" src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo2.png"/><span class="site-name">NobitaYuan</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 目录</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-heartbeat"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 影音</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-user"></i><span> 个人</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/about/"><i class="fa-fw fas fa-message"></i><span> 关于</span></a></li><li><a class="site-page child" href="/love/"><i class="fa-fw fas fa-heart-pulse"></i><span> MyLove</span></a></li></ul></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">GC垃圾回收机制</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-05T16:00:00.000Z" title="发表于 2023-06-06 00:00:00">2023-06-06</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-07T14:00:11.854Z" title="更新于 2023-06-07 22:00:11">2023-06-07</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/">前端</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%89%8D%E7%AB%AF/%E5%85%B6%E4%BB%96/">其他</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="GC垃圾回收机制"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="深入理解JavaScript——垃圾回收机制"><a href="#深入理解JavaScript——垃圾回收机制" class="headerlink" title="深入理解JavaScript——垃圾回收机制"></a>深入理解JavaScript——垃圾回收机制</h1><h3 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a><strong>内存泄漏</strong></h3><p>不再使用到的内存，没有及时释放，就被称为内存泄漏。而内存泄漏，会让系统占用极高的内存，让系统变卡甚至奔溃。</p>
+<blockquote>
+<p>当我们遇到遇到内存泄漏时，我们需要做什么呢？</p>
+<p>不需要做任何事，因为 JavaScript 中的垃圾回收是自动的</p>
+<p>在 JavaScript 的世界里，JavaScript 引擎会自动执行命令，帮我们清理用不到的变量（即减少内存开销）</p>
+<p>当然，不同的语言采用不同的内存管理方式，大多数语言采用的是自动内存管理</p>
+<ul>
+<li><strong>自动内存管理（垃圾回收）阵营：</strong></li>
+</ul>
+<p>JavaScript、Java、Go、Python、PHP、Ruby、C#</p>
+<ul>
+<li><strong>手动内存管理阵营：</strong></li>
+</ul>
+<p>C、C++、Rust</p>
+</blockquote>
+<h3 id="因为会导致内存泄漏所以需要垃圾回收"><a href="#因为会导致内存泄漏所以需要垃圾回收" class="headerlink" title="因为会导致内存泄漏所以需要垃圾回收"></a>因为会导致内存泄漏所以需要垃圾回收</h3><p>如果任由内存泄漏，会让系统变卡甚至崩溃。导致这问题的原因是 V8 引擎只能使用一部分内存，具体来说，在 64 位系统下，V8 最多只能分配 1.4G；在 32 位系统中，最多只能分配 0.7G</p>
+<p>因为使用内存大小上限，所以当有用不到的变量时，引擎会帮我们清理掉</p>
+<h3 id="回收的是什么"><a href="#回收的是什么" class="headerlink" title="回收的是什么"></a><strong>回收的是什么</strong></h3><p>回收内存。清理变量，释放内存空间</p>
+<h3 id="垃圾回收运行机制"><a href="#垃圾回收运行机制" class="headerlink" title="垃圾回收运行机制"></a><strong>垃圾回收运行机制</strong></h3><p>在说这个话题前，我们先回顾下，在 JavaScript 由什么组成 中曾经介绍过，JavaScript 的数据类型可分为基本类型和引用类型。基本类型存在栈内存，引用类型存在堆内存</p>
+<p>但是我们那时没有解释为什么基本类型要存在栈中，引用类型要存在堆中。只是介绍，因为基本类型所花销的内存小，而引用类型所花销的内存大，而这恰恰是分两个空间存放不同数据的原因</p>
+<p>在 JavaScript 中，引擎需要用栈来维护程序执行时的上下文状态（即执行上下文），如果栈空间大了的话，所有数据存放在栈空间中，会影响到上下文切换的效率，从而影响整个程序的执行效率，所以占内存大的数据会放在堆空间中，引用它的地址来表示这个变量</p>
+<h3 id="堆内存的分类"><a href="#堆内存的分类" class="headerlink" title="堆内存的分类"></a><strong>堆内存的分类</strong></h3><p>一个 V8 进程的内存通常由以下部分组成</p>
+<ul>
+<li>新生代内存区（new space）</li>
+<li>老生代内存区（old space）</li>
+<li>大对象区（large object space）</li>
+<li>代码区（code space）</li>
+<li>map 区（map space）</li>
+</ul>
+<p>其他几个不重要，关键是新生代（内存）和老生代（内存）。针对新生代和老生代，引擎采用了两种不同的垃圾回收机制</p>
+<h3 id="新生代与老生代的垃圾回收"><a href="#新生代与老生代的垃圾回收" class="headerlink" title="新生代与老生代的垃圾回收"></a><strong>新生代与老生代的垃圾回收</strong></h3><p>在介绍两种垃圾回收机制前，要先知道两个知识点：<strong>代际假说</strong>和<strong>分代收集</strong></p>
+<p>代际假说有以下两个特点：</p>
+<ul>
+<li>大部分对象在内存中存活的时间很短，简单说，就是很多对象一经分配内存，很快就变得不可访问</li>
+<li>不死的对象，会活得更久</li>
+</ul>
+<p>因为有代际假说的认知，所以我们在垃圾回收时，会根据对象不同的生存周期采用不同的算法，其中 V8 把堆内存分为新生代和老生代两个区域（其他几个区域用处不大）</p>
+<p>新生代中存放生存时间短的对象，老生代存放生存时间久的对象</p>
+<p>为此，新生代区通常只支持1~8M 的容量，而老生代区会支持更大的容量，而针对这两块区域，V8 分别使用两个不同的垃圾回收器</p>
+<ul>
+<li>主垃圾回收器，负责老生代的垃圾回收</li>
+<li>副垃圾回收器，负责新生代的垃圾回收</li>
+</ul>
+<p>我们先说说副垃圾回收器时如何处理垃圾回收的</p>
+<h3 id="新生代内存回收"><a href="#新生代内存回收" class="headerlink" title="新生代内存回收"></a><strong>新生代内存回收</strong></h3><p>新生代采用的是 Scavenge 算法，所谓 Scavenge 算法，是把新生代空间对半分为两个区域，一半是对象区域（from），一半是空闲区域（to）。如下图所示：</p>
+<p><img src="/../../images/v2-5d90683202ee91166024cef4e158f5b5_720w.webp" alt="img"></p>
+<p>V8堆内存</p>
+<p>新的对象会首先被分配到对象（from）空间，当对象区域快写满时，就需要执行一次垃圾清理操作。当进行垃圾收回时，先将 from 空间中存活的对象复制到空闲（to）空间进行保存，对未存活的空间进行回收。复制完成后，对象空间和空闲空间进行角色调换，空闲空间变成新的对象空间，原来的对象空间则变成空闲空间。这样就完成了垃圾对象的回收操作，同时这种角色调换的操作能让新生代中的这两块区域无限重复使用下去</p>
+<p><img src="/../../images/v2-ba1ae480cc0a1382e0b607ba92cabe75_720w.webp" alt="img"></p>
+<p>Scavenge 算法执行图</p>
+<p>而当一个对象在两次变换中还存在时，就会从新生代区”晋升“到”老生代区“。这一过程被称为<strong>对象晋升策略</strong></p>
+<h3 id="老生代内存回收"><a href="#老生代内存回收" class="headerlink" title="老生代内存回收"></a><strong>老生代内存回收</strong></h3><p>主垃圾回收器负责老生代区的垃圾回收。其中的对象包括新生代区”晋升“的对象和一些大的对象。因此老生代区中的对象有两个特点，对象占用空间大，对象存活时间长</p>
+<p>它不会像新生代区那样使用 Scavenge 算法，因为复制大对象所花费的时间长，执行效率并不高。所以它采用标记 - 清除（Mark - Sweep）进行垃圾回收</p>
+<p>简单来说，先标记，然后清除，但是内存空间里的对象还是不连续，所以引入整理。这就是老生代区的垃圾回收过程 <strong>标记 - 清除 - 整理</strong>。先标记哪些是要回收的变量，再进行回收（清除），然后将内存空间整理（到一边），这样空间就大了</p>
+<p><img src="/../../images/v2-33f352d7ded14073b6fbf83a8b90dad5_720w.webp" alt="img"></p>
+<p>标记整理过程</p>
+<p>因为老生代区的对象相对大，虽然采用”标记-清除“算法会比 Scavenge 更快，但架不住卡顿问题。为什么会卡顿？因为 JavaScript 是单线程。为此，V8 将标记过程分为一个个子标记过程，同时让垃圾回收标记和 JavaScript 应用逻辑交替进行，直到标记阶段完成，这一算法被称为增量标记算法</p>
+<p><img src="/../../images/v2-8caeb00451623c091f96f52e824da166_720w.webp" alt="img"></p>
+<p>标记整理过程</p>
+<p>而这一行为，与 React Fiber 的设计思路类似，将大人物分割成小任务，因为小，所以执行快，让人察觉不到卡顿</p>
+<h3 id="新生代-VS-老生代"><a href="#新生代-VS-老生代" class="headerlink" title="新生代 VS 老生代"></a><strong>新生代 VS 老生代</strong></h3><ul>
+<li><p>新生代垃圾回收是临时分配的内存，存活时间短；老生代垃圾回收是常驻内存，存活时间长</p>
+</li>
+<li><p>新生代垃圾回收由副垃圾回收器负责；老生代垃圾回收由主垃圾回收器负责</p>
+</li>
+<li><p>新生代采用 Scavenge 算法；老生代采用「标记-清除」算法</p>
+</li>
+<li><ul>
+<li><p>Scavenge 算法：将空间分为两半，一半是 from 空间，一半是 to 空间。新加入的对象会放在 from 空间，当空间快满时，执行垃圾清理；再角色调换，再当调换完后的 from 空间快蛮时，再执行垃圾清理，如此反复</p>
+</li>
+<li><p>标记-清理-整理：此为两个算法，「标记-清理」算法和 「标记-整理」算法</p>
+</li>
+<li><ul>
+<li>标记-清理：标记用不到的变量，清理掉</li>
+<li>标记-整理：清理完内存后，会产生不连续的内存空间，为节省空间，整理算法会将内存排序到一处空间，空间就变大了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="引用计数（reference-counting）"><a href="#引用计数（reference-counting）" class="headerlink" title="引用计数（reference counting）"></a><strong>引用计数（reference counting）</strong></h3><p>在 《JavaScript 高级程序设计》中介绍了另一种垃圾回收的机制——引用计数</p>
+<p>简单来说：引擎会有张”引用表“，保存了内存里面的资源的引用次数。如果一个值的引用次数是0，就表示这个值不再用到了，因此可以将这块内存释放</p>
+<p>但后来这个机制被放弃了，因为它会遇到一个严重的问题：循环引用，从而导致内存泄漏，所以被放弃了</p>
+<h3 id="性能优化采取的策略通常包括以下几点："><a href="#性能优化采取的策略通常包括以下几点：" class="headerlink" title="性能优化采取的策略通常包括以下几点："></a><strong>性能优化采取的策略通常包括以下几点：</strong></h3><h3 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h3><p><code>JavaScript</code>程序在执行过程中会维持相当量级的变量数目，频繁扫描这些变量会造成明显的开销。但是这些变量在生命周期上各有特点，例如局部变量会频繁的创建，迅速的使用，然后丢弃，而全局变量则会长久的占据内存。<code>JavaScript</code>把两类对象分开管理，对于快速创建、使用并丢弃的局部变量，垃圾回收器会频繁的扫描，保证这些变量在失去作用后迅速被清理。而对于哪些长久把持内存的变量，降低检查它们的频率，从而节约一定的开销。</p>
+<h3 id="增量收集"><a href="#增量收集" class="headerlink" title="增量收集"></a>增量收集</h3><p>增量式的思想在性能优化上非常常见，同样可以用于垃圾回收。在变量数目非常大时，一次性遍历所有变量并颁发优秀员工标记显然非常耗时，导致程序在执行过程中存在卡顿。所以，引擎会把垃圾回收工作分成多个子任务，并在程序执行的过程中逐步执行每个小任务，这样就会造成一定的回收延迟，但通常不会造成明显的程序卡顿。</p>
+<h3 id="空闲收集"><a href="#空闲收集" class="headerlink" title="空闲收集"></a>空闲收集</h3><p><code>CPU</code>即使是在复杂的程序中也不是一直都有工作的，这主要是因为<code>CPU</code>工作的速度非常快，外围<code>IO</code>往往慢上几个数量级，所以在<code>CPU</code>空闲的时候安排垃圾回收策略是一种非常有效的性能优化手段，而且基本不会对程序本身造成不良影响。这种策略就类似于系统的空闲时间升级一样，用户根本察觉不到后台的执行。</p>
+<h2 id="编年体垃圾回收历史"><a href="#编年体垃圾回收历史" class="headerlink" title="编年体垃圾回收历史"></a><strong>编年体垃圾回收历史</strong></h2><p>1960年，John McCarthy发表了一篇论文，提出了<strong>标记-清除算法</strong>。可是标记-清除算法由两个要命的缺点：分配速度慢，容易产生碎片</p>
+<p>为了解决这个问题，1963年，Marvin L. Minsky提出了<strong>复制算法</strong>。而 JavaScript 中的 Scavenge 算法就是以它为基础的改良版本。它的缺点是空间利用率不大，每次只能使用一次</p>
+<p>1960年，George E. Collins提出了一个新的 GC 算法：<strong>引用计数</strong>，缺点是不能回收“循环引用”，目前 JavaScript 的引擎是没有采用这种回收机制</p>
+<p>如此，垃圾回收大厦地基已经建好，后人只是在此基础上修修补补</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a><strong>总结</strong></h2><p>我们介绍了什么是垃圾回收机制，为什么会有垃圾回收机制，以及介绍了垃圾回收的运行机制，它的两种内存采用的不同的垃圾回收算法等等。了解垃圾回收机制，是为了让我们更清晰地明白其运行原理，虽然我们没必要去了解「标记-清理」、「标记-整理」、「Scavenge 」等等算法，但如果明白它们为什么要采用这样的算法有一定的必要性</p>
+<p>不然，小白问起网站为什么会卡时，你就可以“无意”透露是不是内存泄漏了啊，然后引出 JavaScript 的垃圾回收机制等，装一次老前辈的经验之谈</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://nobitayuan.github.io">NobitaYuan</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://nobitayuan.github.io/2023/06/06/TechnicalArticles/outhers/01.GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/">https://nobitayuan.github.io/2023/06/06/TechnicalArticles/outhers/01.GC%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://nobitayuan.github.io" target="_blank">NobitaYuan</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">垃圾回收</a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F/">内存泄漏</a><a class="post-meta__tags" href="/tags/%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA/">内存溢出</a><a class="post-meta__tags" href="/tags/%E5%A0%86/">堆</a><a class="post-meta__tags" href="/tags/%E6%A0%88/">栈</a><a class="post-meta__tags" href="/tags/V8/">V8</a></div><div class="post_share"><div class="social-share" data-image="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/06/06/TechnicalArticles/KnowledgePoints/JS%E9%87%8D%E8%A6%81%E7%9F%A5%E8%AF%86%E7%82%B9/" title="JS重要知识点"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">JS重要知识点</div></div></a></div><div class="next-post pull-right"><a href="/2023/06/06/TechnicalArticles/js/day34%20jwt/" title="JWT"><img class="cover" src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">JWT</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="http://rvt7oeuw4.hn-bkt.clouddn.com/blog/y_logo6.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">NobitaYuan</div><div class="author-info__description">记性不好？那就记录下来！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">158</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">23</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/NobitaYuan"><i class="fab fa-github"></i><span>前往小窝...</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/NobitaYuan" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="https://space.bilibili.com/19217489" target="_blank" title="bilibili"><i class="fab fa-bilibili"></i></a><a class="social-icon" href="https://www.zhihu.com/people/hello-43-1-31" target="_blank" title="zhihu"><i class="fab fa-zhihu"></i></a><a class="social-icon" href="mailto:nobitayuan@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">是不是感觉名字不好记呀？ 来跟我读：(诺比塔 袁) 这下不就记住了吗？</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3JavaScript%E2%80%94%E2%80%94%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6"><span class="toc-number">1.</span> <span class="toc-text">深入理解JavaScript——垃圾回收机制</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="toc-number">1.0.1.</span> <span class="toc-text">内存泄漏</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%A0%E4%B8%BA%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E6%89%80%E4%BB%A5%E9%9C%80%E8%A6%81%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.0.2.</span> <span class="toc-text">因为会导致内存泄漏所以需要垃圾回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9E%E6%94%B6%E7%9A%84%E6%98%AF%E4%BB%80%E4%B9%88"><span class="toc-number">1.0.3.</span> <span class="toc-text">回收的是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E8%BF%90%E8%A1%8C%E6%9C%BA%E5%88%B6"><span class="toc-number">1.0.4.</span> <span class="toc-text">垃圾回收运行机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A0%86%E5%86%85%E5%AD%98%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">1.0.5.</span> <span class="toc-text">堆内存的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E4%B8%8E%E8%80%81%E7%94%9F%E4%BB%A3%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="toc-number">1.0.6.</span> <span class="toc-text">新生代与老生代的垃圾回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6"><span class="toc-number">1.0.7.</span> <span class="toc-text">新生代内存回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%80%81%E7%94%9F%E4%BB%A3%E5%86%85%E5%AD%98%E5%9B%9E%E6%94%B6"><span class="toc-number">1.0.8.</span> <span class="toc-text">老生代内存回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B0%E7%94%9F%E4%BB%A3-VS-%E8%80%81%E7%94%9F%E4%BB%A3"><span class="toc-number">1.0.9.</span> <span class="toc-text">新生代 VS 老生代</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%EF%BC%88reference-counting%EF%BC%89"><span class="toc-number">1.0.10.</span> <span class="toc-text">引用计数（reference counting）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E9%87%87%E5%8F%96%E7%9A%84%E7%AD%96%E7%95%A5%E9%80%9A%E5%B8%B8%E5%8C%85%E6%8B%AC%E4%BB%A5%E4%B8%8B%E5%87%A0%E7%82%B9%EF%BC%9A"><span class="toc-number">1.0.11.</span> <span class="toc-text">性能优化采取的策略通常包括以下几点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6"><span class="toc-number">1.0.12.</span> <span class="toc-text">分代回收</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A2%9E%E9%87%8F%E6%94%B6%E9%9B%86"><span class="toc-number">1.0.13.</span> <span class="toc-text">增量收集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A9%BA%E9%97%B2%E6%94%B6%E9%9B%86"><span class="toc-number">1.0.14.</span> <span class="toc-text">空闲收集</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BC%96%E5%B9%B4%E4%BD%93%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%8E%86%E5%8F%B2"><span class="toc-number">1.1.</span> <span class="toc-text">编年体垃圾回收历史</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.2.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/06/06/TechnicalArticles/LeeCode/%E7%AC%AC%E4%B8%80%E5%91%A8/" title="LeetCode刷题"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LeetCode刷题"/></a><div class="content"><a class="title" href="/2023/06/06/TechnicalArticles/LeeCode/%E7%AC%AC%E4%B8%80%E5%91%A8/" title="LeetCode刷题">LeetCode刷题</a><time datetime="2023-06-05T16:00:00.000Z" title="发表于 2023-06-06 00:00:00">2023-06-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/06/TechnicalArticles/browser/01.%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" title="浏览器渲染相关知识"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="浏览器渲染相关知识"/></a><div class="content"><a class="title" href="/2023/06/06/TechnicalArticles/browser/01.%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" title="浏览器渲染相关知识">浏览器渲染相关知识</a><time datetime="2023-06-05T16:00:00.000Z" title="发表于 2023-06-06 00:00:00">2023-06-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/06/06/TechnicalArticles/browser/02.%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3/" title="浏览器进程相关"><img src="https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="浏览器进程相关"/></a><div class="content"><a class="title" href="/2023/06/06/TechnicalArticles/browser/02.%E6%B5%8F%E8%A7%88%E5%99%A8%E7%9A%84%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3/" title="浏览器进程相关">浏览器进程相关</a><time datetime="2023-06-05T16:00:00.000Z" title="发表于 2023-06-06 00:00:00">2023-06-06</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://ts1.cn.mm.bing.net/th/id/R-C.d5ab885cd02263c447edea13bd4eb06f?rik=io1mNZmII83GHw&amp;riu=http%3a%2f%2fimage.hnol.net%2fc%2f2016-10%2f05%2f20%2f201610052006512571-2127595.jpg&amp;ehk=sCZYotTH0JiRh80ttR%2bPGC95zALaETi8Hkj6WsAz85M%3d&amp;risl=&amp;pid=ImgRaw&amp;r=0')"><div id="footer-wrap"><div class="copyright">&copy;2023 By NobitaYuan</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">此路甚是遥远，但也不可妄自菲薄.<p><a target="_blank" href="https://hexo.io/"><img src="https://img.shields.io/badge/Frame-Hexo-blue?style=flat&logo=hexo" title="博客框架为Hexo"></a>&nbsp;<a target="_blank" href="https://butterfly.js.org/"><img src="https://img.shields.io/badge/Theme-Butterfly-6513df?style=flat&logo=bitdefender" title="主题采用butterfly"></a>&nbsp;<a target="_blank" href="https://github.com/NobitaYuan"><img src="https://img.shields.io/badge/Source-Github-d021d6?style=flat&logo=GitHub" title="本站项目由Gtihub托管"></a>&nbsp;<a target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="https://img.shields.io/badge/Copyright-BY--NC--SA%204.0-d42328?style=flat&logo=Claris" title="本站采用知识共享署名-非商业性使用-相同方式共享4.0国际许可协议进行许可"></a></p></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><a class="icon-V hidden" onclick="switchNightMode()" title="浅色和深色模式转换"><svg width="25" height="25" viewBox="0 0 1024 1024"><use id="modeicon" xlink:href="#icon-moon"></use></svg></a><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button><button id="go-down" type="button" title="直达底部" onclick="btf.scrollToDest(document.body.scrollHeight, 500)"><i class="fas fa-arrow-down"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fancyapps-ui/5.0.17/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async src="/js/title.js"></script><script async src="/js/fps.js"></script><script src="/js/debounce.js"></script><script src="/js/sun_moon.js" async></script><script async src="https://cdn1.tianli0.top/npm/vue@2.6.14/dist/vue.min.js"></script><script async src="https://cdn1.tianli0.top/npm/element-ui@2.15.6/lib/index.js"></script><script defer type="text/javascript" src="https://cdn1.tianli0.top/npm/sweetalert2@8.19.0/dist/sweetalert2.all.js"></script><script defer src="/js/lunar.js"></script><script defer src="/js/day.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/butterfly-extsrc/1.1.3/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script src="https://lib.baomitu.com/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div class="no-result" id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js"></script></div></div></body></html>
